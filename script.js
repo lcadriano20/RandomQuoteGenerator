@@ -1,31 +1,41 @@
-const quoteText   = document.querySelector(".quote"),
-quoteBtn          = document.querySelector("button"),
-authorName        = document.querySelector('.author .name'),
+const factText   = document.querySelector(".quote"),
+factBtn          = document.querySelector("button"),
 soundBtn          = document.querySelector(".sound")
 copyBtn           = document.querySelector(".copy")
 twitterBtn        = document.querySelector(".twitter")
 
-const randomQuote = () => {
 
-    // Fetching Random quote from the API
+let apiKey = ''
+let url = 'https://api.api-ninjas.com/v1/facts'
+
+  let options = {
+    method: "GET",
+    headers: { 
+       "x-api-key": apiKey
+      }
+  }
     
-    fetch('https://favqs.com/api/qotd')
-    .then(response => response.json())
-    .then(data => {
-      console.log(data.quote.body);
-    })
-    .catch(error => console.error('Erro:', error));
+
+const randomFact = () => {
+  fetch(url,options).then((response)=> response.json()).then((data)=> {
+    includeOnHtml(data[0].fact)
+  })
+  
+}
+
+function includeOnHtml(fact) {
+  factText.textContent = fact
 }
 function copyQuote() {
-    navigator.clipboard.writeText(quoteText.textContent)
+    navigator.clipboard.writeText(factText.textContent)
 }
 function quoteTwitter() {
-    let tweetUrl = `https://twitter.com/intent/tweet?url=${quoteText.innerText}`
+    let tweetUrl = `https://twitter.com/intent/tweet?url=${factText.innerText}`
     window.open(tweetUrl, '_blank')
 }
 
 function listenToQuote() {
-    let utterance = new SpeechSynthesisUtterance(`${quoteText.innerText} by ${authorName.textContent}`)
+    let utterance = new SpeechSynthesisUtterance(`${factText.innerText}`)
     speechSynthesis.speak(utterance) // Speak method of speechSynthesis speaks the utterance
 }
 
@@ -33,4 +43,5 @@ soundBtn.addEventListener('click',listenToQuote)
 copyBtn.addEventListener('click',copyQuote)
 twitterBtn.addEventListener('click',quoteTwitter)
 
-quoteBtn.addEventListener("click",randomQuote)
+factBtn.addEventListener("click",randomFact)
+
